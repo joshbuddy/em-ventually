@@ -1,0 +1,9 @@
+task :default => :test
+
+desc "Run tests"
+task :test do
+  $: << File.expand_path("#{File.dirname(__FILE__)}/../../lib")
+  require 'em-ventually'
+  require './helper'
+  Dir['./*.rb'].each { |test| require test }
+end

@@ -1,0 +1,6 @@
+source :rubygems
+
+gem 'rspec', '~> 2.6.0'
+gem 'eventmachine'
+gem 'rake', '0.8.7'
+gem 'callsite'

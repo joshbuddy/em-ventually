@@ -1,0 +1,11 @@
+require 'rake/testtask'
+
+desc "Run basic tests"
+Rake::TestTask.new("test") { |t|
+  t.pattern = File.expand_path("#{File.dirname(__FILE__)}/test_*.rb")
+  t.verbose = true
+  t.warning = true
+  t.libs = [File.expand_path("#{File.dirname(__FILE__)}/../../lib")]
+}
+
+task :default => :test

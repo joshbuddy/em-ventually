@@ -1,0 +1,6 @@
+source :rubygems
+
+gem 'eventmachine'
+gem 'rake', '0.8.7'
+gem 'phocus'
+gem 'callsite'

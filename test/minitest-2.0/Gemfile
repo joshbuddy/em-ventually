@@ -1,0 +1,7 @@
+source :rubygems
+
+gem 'minitest', '~> 2.0.0'
+gem 'eventmachine'
+gem 'rake', '0.8.7'
+gem 'phocus'
+gem 'callsite'

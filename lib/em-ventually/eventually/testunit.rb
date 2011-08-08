@@ -22,11 +22,12 @@ module EventMachine
           @runner.assert false, msg
         end
 
-        def assert_equal(result)
+        def assert_test(result)
           e = expectation
-          if result == expectation
+          if super
+            msg = formatted_message("#{result.inspect} passed")
             @runner.instance_eval do
-              assert_equal result, e
+              assert true, msg
             end
             true
           else

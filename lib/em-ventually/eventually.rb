@@ -14,11 +14,16 @@ module EventMachine
         @pool.push self
         @total_time = opts && opts[:total] || EventMachine::Ventually.total_default
         @every_time = opts && opts[:every] || EventMachine::Ventually.every_default
-        run
+        @test_blk = expectation.nil? ? proc{|r| r } : proc{|r| expectation == r}
+        EM.add_timer(0.05) { run }
       end
 
-      def assert_equal(got)
-        got == expectation
+      def test(&blk)
+        @test_blk = blk
+      end
+
+      def assert_test(got)
+        @test_blk[got]
       end
 
       def formatted_message(msg)
@@ -26,18 +31,18 @@ module EventMachine
       end
 
       def kill_timer
-        @kill_timer ||= EM.add_timer(@total_time) { stop(formatted_message("Exceeded time, expected #{expectation.inspect}, last value was #{@last_val.inspect}")) }
+        @kill_timer ||= EM.add_timer(@total_time) { stop(formatted_message("Exceeded time#{", expected #{expectation.inspect}" unless expectation.nil?}, last value was #{@last_val.inspect}")) }
       end
 
       def run
         if @pool.should_run?(self)
           kill_timer
           if @block.arity != 1
-            process_equality(@last_val = @block.call)
+            process_test(@last_val = @block.call)
           else
             @block[proc { |val|
               @last_val = val
-              process_equality(val)
+              process_test(val)
             }]
           end
         else
@@ -45,8 +50,8 @@ module EventMachine
         end
       end
 
-      def process_equality(val)
-        if assert_equal(val)
+      def process_test(val)
+        if assert_test(val)
           stop
         else
           @count += 1

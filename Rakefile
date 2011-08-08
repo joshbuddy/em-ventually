@@ -5,7 +5,7 @@ task :default => :test
 task :test do
   matchers = {
     'minitest-2.0' => [/6 tests, 9 assertions, 1 failures, 0 errors, 0 skips/m],
-    'rspec-2.6' => [/\n\.\.\.\.F\.\.\n/m],
+    'rspec-2.6' => [/\n\.\.\.\.F\.\.\.\n/m],
     'test-unit' => [/\n\.\.\.F\.\.\n/m, /test_out_of_order\(TestEMVentually\)/m]
   }
 

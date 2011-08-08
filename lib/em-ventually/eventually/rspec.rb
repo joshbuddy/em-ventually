@@ -18,11 +18,12 @@ module EventMachine
           ::RSpec::Expectations.fail_with(msg)
         end
 
-        def assert_equal(result)
+        def assert_test(result)
           e = expectation
-          if result == expectation
+          if super
+            msg = formatted_message("#{result.inspect} passed")
             @runner.instance_eval do
-              result.should == e
+              1.should == 1
             end
             true
           else

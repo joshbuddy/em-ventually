@@ -28,7 +28,7 @@ module EventMachine
       @_pool ||= Pool.new
     end
 
-    def eventually(expectation = true, opts = nil, &block)
+    def eventually(expectation = nil, opts = nil, &block)
       ancestors = self.class.ancestors.map{|s| s.to_s}
       cls = if ancestors.include?('MiniTest::Unit::TestCase')
         Eventually::MiniTest

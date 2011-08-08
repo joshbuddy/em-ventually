@@ -1,9 +1,7 @@
 $LOAD_PATH << "#{File.dirname(__FILE__)}/../../lib"
 require 'em-ventually/rspec'
 
-
 describe EM::Ventually do
-  include EM::Ventually
 
   it "should allow a normal test" do
     1.should == 1
@@ -53,5 +51,14 @@ describe EM::Ventually do
     EM.add_timer(3.1) { val = 'done'}
     eventually('done', :every => 0.5, :total => 3.5) { count +=1; val }
     eventually(7) { count }
+  end
+
+  it "should allow custom tests" do
+    val = nil
+    count = 0
+    time = Time.new.to_f
+    EM.add_timer(0.5) { val = 'done'}
+    eventually('done') { val }
+    eventually { Time.new.to_f - time }.test{|t| t < 1}
   end
 end

@@ -1,9 +1,10 @@
 require 'set'
 require 'eventmachine'
 require 'callsite'
-require 'em-ventually/version'
 require 'em-ventually/eventually'
+require 'em-ventually/emify'
 require 'em-ventually/pool'
+require 'em-ventually/version'
 
 module EventMachine
   module Ventually

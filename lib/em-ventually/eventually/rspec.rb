@@ -4,27 +4,10 @@ module EventMachine
       class RSpec < Eventually
         def self.inject
           ::RSpec::Core::ExampleGroup.class_eval <<-EOT, __FILE__, __LINE__ + 1
+          include EM::Ventually::Emify
           alias_method :original_instance_eval, :instance_eval
           def instance_eval(&block)
-            _em do
-              original_instance_eval(&block)
-            end
-          end
-
-          def _em
-            result = nil
-            if EM.reactor_running?
-              result = yield
-            else
-              EM.run do
-                begin
-                  result = yield
-                ensure
-                  EM.stop if (!instance_variable_defined?(:@_pool) || @_pool.nil? || @_pool.empty?) && EM.reactor_running?
-                end
-              end
-            end
-            result
+            _em { original_instance_eval(&block) }
           end
           EOT
         end

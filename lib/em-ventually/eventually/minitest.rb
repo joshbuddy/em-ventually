@@ -4,18 +4,11 @@ module EventMachine
       class MiniTest < Eventually
         def self.inject
           ::MiniTest::Unit::TestCase.class_eval <<-EOT, __FILE__, __LINE__ + 1
+          include EM::Ventually::Emify
           alias_method :__original__send__, :__send__
           def __send__(*args, &blk)
             if Callsite.parse(caller.first).method == 'run'
-              result = nil
-              EM.run do 
-                begin
-                  result = __original__send__(*args, &blk)
-                ensure
-                  EM.stop if (!instance_variable_defined?(:@_pool) || @_pool.nil? || @_pool.empty?) && EM.reactor_running?
-                end
-                result
-              end
+              _em { __original__send__(*args, &blk) }
             else
               __original__send__(*args, &blk)
             end

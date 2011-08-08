@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   # dependencies
   s.add_runtime_dependency 'eventmachine'
-  s.add_runtime_dependency 'callsite'
+  s.add_runtime_dependency 'callsite',     '~> 0.0.5'
   s.add_development_dependency 'code_stats'
   s.add_development_dependency 'rake',     '~> 0.8.7'
   s.add_development_dependency 'phocus'

@@ -1,5 +1,6 @@
 $LOAD_PATH << "#{File.dirname(__FILE__)}/../../lib"
-require 'em-ventually'
+require 'em-ventually/rspec'
+
 
 describe EM::Ventually do
   include EM::Ventually
@@ -44,5 +45,13 @@ describe EM::Ventually do
       eventually('test') {|m| m[val] }
       eventually('test2') {|m| m[val] }
     }
+  end
+
+  it "should allow longer tests with a specific number of passes" do
+    val = nil
+    count = 0
+    EM.add_timer(3.1) { val = 'done'}
+    eventually('done', :every => 0.5, :total => 3.5) { count +=1; val }
+    eventually(7) { count }
   end
 end

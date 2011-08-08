@@ -12,8 +12,8 @@ module EventMachine
         @pool, @runner, @caller, @expectation, @opts, @block = pool, runner, caller, expectation, opts, block
         @count = 0
         @pool.push self
-        @total_time = opts && opts[:total] || 1
-        @every_time = opts && opts[:every] || 0.1
+        @total_time = opts && opts[:total] || EventMachine::Ventually.total_default
+        @every_time = opts && opts[:every] || EventMachine::Ventually.every_default
         run
       end
 

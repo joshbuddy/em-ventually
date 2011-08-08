@@ -3,17 +3,19 @@ module EventMachine
     class Eventually
       class MiniTest < Eventually
         def self.inject
-          ::MiniTest::Unit::TestCase.class_eval <<-EOT, __FILE__, __LINE__ + 1
-          include EM::Ventually::Emify
-          alias_method :__original__send__, :__send__
-          def __send__(*args, &blk)
-            if Callsite.parse(caller.first).method == 'run'
-              _em { __original__send__(*args, &blk) }
-            else
-              __original__send__(*args, &blk)
+          unless ::MiniTest::Unit::TestCase.public_method_defined?(:_em)
+            ::MiniTest::Unit::TestCase.class_eval <<-EOT, __FILE__, __LINE__ + 1
+            include EM::Ventually::Emify
+            alias_method :__original__send__, :__send__
+            def __send__(*args, &blk)
+              if Callsite.parse(caller.first).method == 'run'
+                _em { __original__send__(*args, &blk) }
+              else
+                __original__send__(*args, &blk)
+              end
             end
+            EOT
           end
-          EOT
         end
 
         def report(msg)

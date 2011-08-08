@@ -3,13 +3,15 @@ module EventMachine
     class Eventually
       class RSpec < Eventually
         def self.inject
-          ::RSpec::Core::ExampleGroup.class_eval <<-EOT, __FILE__, __LINE__ + 1
-          include EM::Ventually::Emify
-          alias_method :original_instance_eval, :instance_eval
-          def instance_eval(&block)
-            _em { original_instance_eval(&block) }
+          unless ::RSpec::Core::ExampleGroup.public_method_defined?(:_em)
+            ::RSpec::Core::ExampleGroup.class_eval <<-EOT, __FILE__, __LINE__ + 1
+            include EM::Ventually::Emify
+            alias_method :original_instance_eval, :instance_eval
+            def instance_eval(&block)
+              _em { original_instance_eval(&block) }
+            end
+            EOT
           end
-          EOT
         end
 
         def report(msg)

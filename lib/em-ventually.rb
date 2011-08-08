@@ -8,6 +8,22 @@ require 'em-ventually/version'
 
 module EventMachine
   module Ventually
+    def self.every_default=(value)
+      @every_default = value
+    end
+
+    def self.every_default
+      instance_variable_defined?(:@every_default) ? @every_default : 0.1
+    end
+
+    def self.total_default=(value)
+      @total_default = value
+    end
+
+    def self.total_default
+      instance_variable_defined?(:@total_default) ? @total_default : 1.0
+    end
+
     def _pool
       @_pool ||= Pool.new
     end
@@ -38,7 +54,7 @@ module EventMachine
         Eventually::MiniTest
       elsif ancestors.include?('Test::Unit::TestCase')
         Eventually::TestUnit
-      elsif o.respond_to?(:superclass) && o.superclass.to_s == 'RSpec::Core::ExampleGroup'
+      elsif (o.respond_to?(:name) && o.name.to_s == 'RSpec::Core::ExampleGroup') || (o.respond_to?(:superclass) && o.superclass.to_s == 'RSpec::Core::ExampleGroup')
         Eventually::RSpec
       else
         raise("I know what testsuite i'm in!")

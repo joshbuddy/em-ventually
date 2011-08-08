@@ -56,8 +56,8 @@ As well, simple returning doesn't always cover your test. You can pass values ba
     def test_em_simple
       val = nil
       EM.add_timer(0.5) { val = 'test1' }
-      eventually('test1') { |value| value.call(val1) } # The secret sauce is if you called
-                                                       # `eventually` with a parameter or not.
+      eventually('test1') { |test| test[val1] } # The secret sauce is if you called
+                                                # `eventually` with a block that takes a parameter or not.
     end
 ~~~~~
 

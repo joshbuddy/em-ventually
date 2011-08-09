@@ -7,6 +7,8 @@ module EventMachine
             ::Test::Unit::TestCase.class_eval <<-EOT, __FILE__, __LINE__ + 1
             include EM::Ventually::Emify
             alias_method :__original__send__, :__send__
+            old_warning_level = $VERBOSE
+            $VERBOSE = nil
             def __send__(*args, &blk)
               if Callsite.parse(caller.first).method == 'run'
                 _em { __original__send__(*args, &blk) }
@@ -14,6 +16,7 @@ module EventMachine
                 __original__send__(*args, &blk)
               end
             end
+            $VERBOSE = old_warning_level
             EOT
           end
         end

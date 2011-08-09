@@ -41,6 +41,7 @@ module EventMachine
       end
       cls.new(_pool, self, Callsite.parse(caller.first), expectation, opts, block)
     end
+    alias_method :ly, :eventually
 
     def parallel(&blk)
       _pool.in_parallel do

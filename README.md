@@ -80,3 +80,13 @@ If you don't pass a value to eventually, it will test that your value is true (i
       eventually { count }.test{ |v| v >= 3 }
     end
 ~~~~~
+
+of course, you're gonna be writing so many of these we've aliased it to make your style stylish and classy.
+
+~~~~~ {ruby}
+    def test_em_with_test6
+      count = 0
+      EM.add_periodic_timer(0.01) { count += 0.5 }
+      ly { count }.test{ |v| v >= 3 }
+    end
+~~~~~

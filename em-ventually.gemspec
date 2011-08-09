@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake',     '~> 0.8.7'
   s.add_development_dependency 'phocus'
   s.add_development_dependency 'bundler',  '~> 1.0.0'
+  s.add_development_dependency 'minitest', '~> 2.0.0'
 end

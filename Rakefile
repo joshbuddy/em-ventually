@@ -28,6 +28,18 @@ task :test do
     end
   end
 
+  # test README.md
+  require 'minitest/autorun'
+  require 'eventmachine'
+  $LOAD_PATH << 'lib'
+  require 'em-ventually'
+  class ReadmeTest < MiniTest::Unit::TestCase
+    include EM::Ventually
 
+    readme = File.read('./README.md')
+    readme.scan(/~~~~~ \{ruby\}\n(.*?)~~~~~/m).each do |block|
+      class_eval(block.join)
+    end
+  end
 end
 

@@ -21,8 +21,10 @@ module EventMachine
 
       def push(e)
         if @store.last.is_a?(Array)
+          @store.last.last.run unless @store.last.last.nil?
           @store.last.push(e)
         else
+          @store.last.run unless @store.last.nil?
           @store.push(e)
         end
       end

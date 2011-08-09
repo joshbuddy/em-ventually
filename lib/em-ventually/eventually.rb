@@ -15,7 +15,7 @@ module EventMachine
         @total_time = opts && opts[:total] || EventMachine::Ventually.total_default
         @every_time = opts && opts[:every] || EventMachine::Ventually.every_default
         @test_blk = expectation.nil? ? proc{|r| r } : proc{|r| expectation == r}
-        EM.add_timer(0.05) { run }
+        @run_timer = EM.add_timer(0.05) { run }
       end
 
       def test(&blk)
@@ -35,6 +35,7 @@ module EventMachine
       end
 
       def run
+        EM.cancel_timer(@run_timer)
         if @pool.should_run?(self)
           kill_timer
           if @block.arity != 1

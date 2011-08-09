@@ -81,7 +81,7 @@ If you don't pass a value to eventually, it will test that your value is true (i
     end
 ~~~~~
 
-of course, you're gonna be writing so many of these we've aliased it to make your style stylish and classy.
+of course, you're gonna be writing so many of these we've aliased it to make your tests stylish and classy.
 
 ~~~~~ {ruby}
     def test_em_with_test6

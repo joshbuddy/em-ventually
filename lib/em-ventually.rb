@@ -43,6 +43,10 @@ module EventMachine
     end
     alias_method :ly, :eventually
 
+    def manually_stop_em!
+      @_manually_stop_em = true
+    end
+
     def parallel(&blk)
       _pool.in_parallel do
         instance_eval(&blk)

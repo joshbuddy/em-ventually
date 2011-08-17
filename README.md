@@ -5,11 +5,28 @@
 Your tests will eventually pass. You're not sure when, but you know it'll be quick. This is where EM::Ventually can help you!
 
 Take this trivial example. (It's in Minitest, but you can use whatever test suite you'd like*)
+Without em-ventually, testing your EM code requires a lot of boilerplate such as:
 
 ~~~~~ {ruby}
-    def test_em_simple1
-      val = nil
-      EM.add_timer(0.5) { val = 'test' }
+    # Without em-ventually
+    def test_em
+     # Start EM loop.
+     EM.run do
+       # The only two lines you actually care about.
+       val = nil
+       EM.add_timer(0.5) { val = 'test' }
+
+       # Test that work happens in the future.
+       EM.add_periodic_timer(0.1) do
+         if val == 'test'
+           pass      # Increment assertion count.
+           EM.stop   # Manually stop EM loop.
+         end
+       end
+
+       # Guard against infinite loops.
+       EM.add_timer(1) { raise "Potential infinite loop averted!" }
+     end
     end
 ~~~~~
 
@@ -22,17 +39,27 @@ So, you want to test that val is 'test', and as well, you want EM to start on th
 Taking the example above you can enqueue a test.
 
 ~~~~~ {ruby}
-    def test_em_simple2
-      val = nil
+    def test_em
+      val = 'not test'
       EM.add_timer(0.5) { val = 'test' }
       eventually('test') { val }
     end
 ~~~~~
 
-This will poll your block every 0.1 seconds to see if the condition is true. After one second, if it's still not true, it will fail. You can mess with both values by passing in `:every` and `:total`. For example:
+This will poll the block passed to eventually every 0.1 seconds to see if the condition is equal to the argument you passed in to eventually, in this case 'test'. After one second, if it's still not equal, it will fail. If you do not pass in a value for testing, it will evaluate what you return against ruby's notion of truth (not nil and not false). An exmaple:
 
 ~~~~~ {ruby}
-    def test_em_simple3
+    def test_em
+      count = 0
+      EM.add_periodic_timer(0.01) { count += 0.5 }
+      eventually { count >= 3 }
+    end
+~~~~~
+
+As well, you can change both the polling interval as well as the maximum execution time by passing in `:every` and `:total`. Here is an example:
+
+~~~~~ {ruby}
+    def test_em
       val = nil
       EM.add_timer(0.5) { val = 'test' }
       eventually('test', :every => 0.2, :total => 10) { val } # check every 0.2 seconds
@@ -43,7 +70,7 @@ This will poll your block every 0.1 seconds to see if the condition is true. Aft
 You can also parallelize tests if you don't want them to run serially.
 
 ~~~~~ {ruby}
-    def test_em_simple4
+    def test_em
       val1, val2 = nil, nil
       EM.add_timer(0.5) { val1 = 'test1' }
       EM.add_timer(0.5) { val2 = 'test2' }
@@ -54,14 +81,21 @@ You can also parallelize tests if you don't want them to run serially.
     end
 ~~~~~
 
-As well, simple returning doesn't always cover your test. You can pass values back for equality by doing the following.
+Simply returning from your block doesn't always cover your test. Say for instance, you need to do a call against some sort of async client that will return your value in a callback. You can pass values back for equality by doing the following.
 
 ~~~~~ {ruby}
-    def test_em_simple5
-      val = nil
-      EM.add_timer(0.5) { val = 'test1' }
-      eventually('test1') { |with| with[val] } # The secret sauce is if you called
-                                                # `eventually` with a block that takes a parameter or not.
+    class AsyncClient
+      def status(&blk)
+        EM.add_timer(0.5) do
+          blk.call(:ok)
+        end
+      end
+    end
+
+    def test_em
+      client = AsyncClient.new
+      eventually(:ok) { |with| client.status {|status| with[status]} }
+      # The secret sauce is in the arity of the block passed to `eventually`
     end
 ~~~~~
 
@@ -74,7 +108,7 @@ There are a couple of global options you can mess with too. `EM::Ventually.every
 If you don't pass a value to eventually, it will test that your value is true (in the ruby sense). Optionally, you can call `.test` to pass a custom tester.
 
 ~~~~~ {ruby}
-    def test_em_with_test6
+    def test_em
       count = 0
       EM.add_periodic_timer(0.01) { count += 0.5 }
       eventually { count }.test{ |v| v >= 3 }
@@ -84,7 +118,7 @@ If you don't pass a value to eventually, it will test that your value is true (i
 of course, you're gonna be writing so many of these we've aliased it to make your tests stylish and classy.
 
 ~~~~~ {ruby}
-    def test_em_with_test6
+    def test_em
       count = 0
       EM.add_periodic_timer(0.01) { count += 0.5 }
       ly { count }.test{ |v| v >= 3 }

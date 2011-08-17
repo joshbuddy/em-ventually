@@ -10,7 +10,9 @@ module EventMachine
             begin
               result = yield
             ensure
-              EM.stop if (!instance_variable_defined?(:@_pool) || @_pool.nil? || @_pool.empty?) && EM.reactor_running?
+              unless instance_variable_defined?(:@_manually_stop_em) && @_manually_stop_em
+                EM.stop if (!instance_variable_defined?(:@_pool) || @_pool.nil? || @_pool.empty?) && EM.reactor_running?
+              end
             end
           end
         end

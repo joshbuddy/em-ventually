@@ -55,6 +55,6 @@ namespace :test do
     end
     puts
     pass_count = passes.inject(0){|m, s| m += (s == :pass ? 1 : 0)}
-    exit pass_count == passes.size ? 0 : 1
+    raise "README tests failed" unless pass_count == passes.size
   end
 end

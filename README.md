@@ -124,3 +124,12 @@ of course, you're gonna be writing so many of these we've aliased it to make you
       ly { count }.test{ |v| v >= 3 }
     end
 ~~~~~
+
+If you want to manually manage stopping and starting EM within a test, you can call `manually_stop_em!` within your test. An example:
+
+~~~~~ {ruby}
+    def test_em
+      manually_stop_em!
+      EM.add_timer(0.5) { assert "Hey!"; EM.stop }
+    end
+~~~~~

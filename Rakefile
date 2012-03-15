@@ -62,6 +62,7 @@ namespace :test do
 
   task :prepare do
     matchers.each do |type, matcher|
+      puts "Preparing #{type}"
       Dir.chdir("./test/#{type}") do
         ENV['BUNDLE_GEMFILE'] = File.expand_path("./Gemfile")
         out = `bundle 2>&1`
